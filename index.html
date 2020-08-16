@@ -16,10 +16,45 @@
   jQuery is above.
   ^ Optionals--> 
   <link rel="stylesheet" href="styles/style.css" >
+  <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
 
 </head>
 <body>
   <h1>TicTacToe Under Construction</h1>
+  <div id = "player-input-div">
+    <form>
+        <label for = "player-1-name: ">Player 1 name: </label>
+        <input id = "player-1-name" type="text">
+        <br>
+        <br>
+        <label for = "player-2-name: ">Player 2 name: </label>
+        <input id = "player-2-name" type="text">
+        <br>
+        <br>
+        <button id ="name-submit-but"> Submit </button>
+    </form>
+  </div>
+  <div id ="game-div"></div>
+  <div id = "game-div">
+      <table class = "game-table">
+            <tr>
+                <td class ="game-entry">X</td>
+                <td class ="game-entry">O</td>
+                <td class ="game-entry"> </td>
+            </tr>
+            <tr>
+                <td class ="game-entry"> </td>
+                <td class ="game-entry"> </td>
+                <td class ="game-entry"> </td>
+            </tr>
+            <tr>
+                <td class ="game-entry"> </td>
+                <td class ="game-entry"> </td>
+                <td class ="game-entry"> </td>
+            </tr>
+          
+      </table>
+  </div>
   <script src = "scripts/script.js"> </script>
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
    <!-- 
