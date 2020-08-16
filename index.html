@@ -17,20 +17,21 @@
   ^ Optionals--> 
   <link rel="stylesheet" href="styles/style.css" >
   <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
 
 </head>
 <body>
   <h1>TicTacToe Under Construction</h1>
   <div id = "player-input-div">
     <form>
-        <label for = "player-1-name: ">Player 1 name: </label>
-        <input id = "player-1-name" type="text">
-        <br>
-        <br>
-        <label for = "player-2-name: ">Player 2 name: </label>
-        <input id = "player-2-name" type="text">
-        <br>
-        <br>
+        <div id = "player-1-field" class = "inputs">
+            <label for = "player-1-name" class="labels">Player 1:  </label>
+            <input id = "player-1-name" type="text" class = "name-inputs">
+        </div>
+        <div id = "player-2-field" class = "inputs">
+            <label for = "player-2-name" class = "labels">Player 2: </label>
+            <input id = "player-2-name" type="text" class = "name-inputs">
+        </div>
         <button id ="name-submit-but"> Submit </button>
     </form>
   </div>
@@ -38,8 +39,8 @@
   <div id = "game-div">
       <table class = "game-table">
             <tr>
-                <td class ="game-entry">X</td>
-                <td class ="game-entry">O</td>
+                <td class ="game-entry"> </td>
+                <td class ="game-entry"> </td>
                 <td class ="game-entry"> </td>
             </tr>
             <tr>
