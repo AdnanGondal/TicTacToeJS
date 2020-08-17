@@ -33,6 +33,8 @@ const gameBoard = (()=>{
     let _Player1;
     let _Player2;
     let _isSet = false;
+    let _isFinished = false;
+    let _result;
     
 
     const setPlayers = (name1,name2)=>{
@@ -42,6 +44,8 @@ const gameBoard = (()=>{
     }
 
     const isSet= () => _isSet;
+    const isFinished = () => _isFinished;
+    const getResult = () => _result;
 
     const returnPlayer = ()=>{
         if (_Player2.getTurn()) return _Player2;
@@ -68,35 +72,41 @@ const gameBoard = (()=>{
     };
 
     const checkForEnd = (mark)=>{
-        let fillCount = 0
+        let fillCount = 0;
+
         for (let i=0;i<3;i++){
             if (mark== _gameBoard[i][0] && _gameBoard[i][0] == _gameBoard[i][1] && _gameBoard[i][2]== _gameBoard[i][1]){
-                alert("rows win ...");
+                _isFinished = true;
             } else if(mark == _gameBoard[0][i] && _gameBoard[0][i] == _gameBoard[1][i] && _gameBoard[2][i]== _gameBoard[1][i]){
-                alert("col win");
+                _isFinished = true;
             }
         }
         if (mark == _gameBoard[0][0] && _gameBoard[0][0]==_gameBoard[1][1] && _gameBoard[2][2] == _gameBoard[1][1]) {
-            alert("diag win");
+            _isFinished = true;
         } else if (mark == _gameBoard[0][2] && _gameBoard[0][2]==_gameBoard[1][1] && _gameBoard[2][0] == _gameBoard[1][1]){
-            alert("other diag win");
+            _isFinished = true;
         }
 
         for (let i=0;i<3;i++){
             for (let j=0;j<3;j++){
-                if (_gameBoard[i[j] != 0]){fillCount++}
+                if (_gameBoard[i][j] != 0){
+                fillCount++;
+                }
             }
         }
-
-        if (fillCount == 9) alert("Draw!");
-
         
+        if (mark=="X") _result = "p1win";
+        if (mark=="O") _result = "p2win";
+
+        if (fillCount == 9) {
+            _isFinished = true;
+            _result = "draw";
+        }
+
     }
 
-    
-
     return{
-        getBoard, updateBoard, setPlayers,returnPlayer,changeTurns, isSet, checkForEnd
+        getBoard, updateBoard, setPlayers,returnPlayer,changeTurns, isSet, checkForEnd,isFinished,getResult,
     };
 })();
 
@@ -111,7 +121,17 @@ const gameBoard = (()=>{
     let userMessage = document.querySelector('#game-message')
     
     let _entries = document.querySelectorAll(".game-entry");
-    
+
+    const displayResult = ()=>{
+        if (gameBoard.getResult() == "draw") {
+            userMessage.textContent = "It is a Tie!";
+        } else {
+            gameBoard.changeTurns();
+            userMessage.textContent = `${gameBoard.returnPlayer().getName()} is the winner!`;
+
+        }
+    }
+
     let render = ()=>{
 
         submitBut.addEventListener('click',()=>{
@@ -128,22 +148,27 @@ const gameBoard = (()=>{
         _entries.forEach((entry,i)=>{
             entry.addEventListener('click',()=>{
                 
-                if (gameBoard.isSet()){
+                if (gameBoard.isSet() && !gameBoard.isFinished()){
                     let _player = gameBoard.returnPlayer();
                     if (entry.textContent == " " ) {
                         entry.textContent = _player.getMarker();
                         gameBoard.updateBoard(i,entry.textContent)
                         gameBoard.changeTurns();
                         gameBoard.checkForEnd(entry.textContent);
+                        if (gameBoard.isFinished()) {
+                            displayResult();
+                            return;
+                        }
 
                         userMessage.classList.remove("warning");
                         userMessage.classList.add('message');
                         userMessage.textContent = `It is now ${gameBoard.returnPlayer().getName()}'s turn.`
                     }
-                } else {
+            
+                } else if (!gameBoard.isSet()){
                     userMessage.classList.add("warning");
                     userMessage.textContent = ("Please sumbit player names!")
-                }
+                } 
             });
 
         });
