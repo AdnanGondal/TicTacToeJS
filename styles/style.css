@@ -53,10 +53,23 @@ td{
 
   .game-entry{
       background-color: white;
-      font-size: 9vw;
+      font-size: 6vw;
       font-family: 'Handlee', cursive;
+      padding: 0px;
   }
 
   .game-entry:hover{
       transform: scale(1.03);
+  }
+
+  #game-message{
+    font-family: 'Roboto Condensed', sans-serif;
+  }
+
+  .warning{
+    color: red;
+  }
+
+  .message{
+    color:green;
   }

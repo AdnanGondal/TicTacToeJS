@@ -25,14 +25,14 @@
   <div id = "player-input-div">
     <form>
         <div id = "player-1-field" class = "inputs">
-            <label for = "player-1-name" class="labels">Player 1:  </label>
-            <input id = "player-1-name" type="text" class = "name-inputs">
+            <label for = "player1-name" class="labels">Player 1:  </label>
+            <input id = "player1-name" type="text" class = "name-inputs">
         </div>
         <div id = "player-2-field" class = "inputs">
-            <label for = "player-2-name" class = "labels">Player 2: </label>
-            <input id = "player-2-name" type="text" class = "name-inputs">
+            <label for = "player2-name" class = "labels">Player 2: </label>
+            <input id = "player2-name" type="text" class = "name-inputs">
         </div>
-        <button id ="name-submit-but"> Submit </button>
+        <button id ="name-submit-but" type="button"> Submit </button>
     </form>
   </div>
   <div id ="game-div"></div>
@@ -53,8 +53,10 @@
                 <td class ="game-entry"> </td>
                 <td class ="game-entry"> </td>
             </tr>
-          
       </table>
+  </div>
+  <div id = "message-div">
+      <h3 id="game-message"> </h3>
   </div>
   <script src = "scripts/script.js"> </script>
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
