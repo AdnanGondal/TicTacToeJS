@@ -24,6 +24,13 @@
   <h1>TicTacToe Under Construction</h1>
   <div id = "player-input-div">
     <form>
+        <div id = "toggle-div">
+            <Label id ="switch-label">Play with AI: </Label>
+            <label class="switch">
+                <input id = "ai-toggle" type="checkbox">
+                <span class="slider round"></span>
+            </label>
+        </div>
         <div id = "player-1-field" class = "inputs">
             <label for = "player1-name" class="labels">Player 1:  </label>
             <input id = "player1-name" type="text" class = "name-inputs">
@@ -32,7 +39,11 @@
             <label for = "player2-name" class = "labels">Player 2: </label>
             <input id = "player2-name" type="text" class = "name-inputs">
         </div>
-        <button id ="name-submit-but" type="button"> Submit </button>
+        <div id ="buttons-div">
+            <button id ="name-submit-but" type="button"> Submit </button>
+            <button id = "restart-but" type="button"> Restart </button>
+        </div>
+        
     </form>
   </div>
   <div id ="game-div"></div>

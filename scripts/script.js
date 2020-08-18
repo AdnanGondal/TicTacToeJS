@@ -119,8 +119,9 @@ const gameBoard = (()=>{
     let player2Name = document.querySelector("#player2-name");
     let submitBut = document.querySelector('#name-submit-but')
     let userMessage = document.querySelector('#game-message')
-    
     let _entries = document.querySelectorAll(".game-entry");
+    let aiToggle = document.querySelector("#ai-toggle");
+    let player2Div = document.querySelector("#player-2-field")
 
     const displayResult = ()=>{
         if (gameBoard.getResult() == "draw") {
@@ -171,6 +172,16 @@ const gameBoard = (()=>{
                 } 
             });
 
+        });
+
+        aiToggle.addEventListener('click',()=>{
+            console.log(aiToggle.checked);
+            if (player2Div.style.display === "none") {
+                player2Div.style.display = "block";
+              } else {
+                player2Div.style.display = "none";
+              }
+            
         });
     }
 
