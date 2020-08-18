@@ -35,11 +35,22 @@ const gameBoard = (()=>{
     let _isSet = false;
     let _isFinished = false;
     let _result;
+    let _playWithAi = false;
     
+    const resetGame = ()=>{
+        _isSet = false;
+        _isFinished = false;
+        //_playWithAi = false;
+        _gameBoard = [[0 ,0 ,0],
+                     [0, 0 ,0],
+                     [0,0,0]
+                    ];
+    }
 
     const setPlayers = (name1,name2)=>{
         _Player1 = Player(name1,'X',true);
-        _Player2 = Player(name2,'O',false);
+        if (!_playWithAi) _Player2 = Player(name2,'O',false);
+        else _Player2 = Player("Computer",'O',false);
         _isSet = true;
     }
 
@@ -105,8 +116,20 @@ const gameBoard = (()=>{
 
     }
 
+    const toggleAIPlay = ()=>{
+        _playWithAi= !_playWithAi;
+    }
+
+    const getAIStatus = ()=>{
+        return _playWithAi;
+    }
+
+    const aiPlay = ()=>{
+        
+    }
+
     return{
-        getBoard, updateBoard, setPlayers,returnPlayer,changeTurns, isSet, checkForEnd,isFinished,getResult,
+        getBoard, updateBoard, setPlayers,returnPlayer,changeTurns, isSet, checkForEnd,isFinished,getResult,toggleAIPlay,getAIStatus,resetGame
     };
 })();
 
@@ -121,7 +144,8 @@ const gameBoard = (()=>{
     let userMessage = document.querySelector('#game-message')
     let _entries = document.querySelectorAll(".game-entry");
     let aiToggle = document.querySelector("#ai-toggle");
-    let player2Div = document.querySelector("#player-2-field")
+    let player2Div = document.querySelector("#player-2-field");
+    let restartBut = document.querySelector("#restart-but");
 
     const displayResult = ()=>{
         if (gameBoard.getResult() == "draw") {
@@ -131,6 +155,18 @@ const gameBoard = (()=>{
             userMessage.textContent = `${gameBoard.returnPlayer().getName()} is the winner!`;
 
         }
+    }
+
+    const resetAll = ()=>{
+        gameBoard.resetGame();
+        player1Name.value = "";
+        player2Name.value = "";
+        _entries.forEach(entry=>{
+            entry.textContent = " ";
+        })
+        userMessage.textContent="";
+        submitBut.disabled=false;
+
     }
 
     let render = ()=>{
@@ -155,6 +191,11 @@ const gameBoard = (()=>{
                         entry.textContent = _player.getMarker();
                         gameBoard.updateBoard(i,entry.textContent)
                         gameBoard.changeTurns();
+                        if (gameBoard.getAIStatus()) {
+                            console.log("HERE goes the code to make the AI Play")
+                            
+                        
+                        }
                         gameBoard.checkForEnd(entry.textContent);
                         if (gameBoard.isFinished()) {
                             displayResult();
@@ -175,13 +216,29 @@ const gameBoard = (()=>{
         });
 
         aiToggle.addEventListener('click',()=>{
-            console.log(aiToggle.checked);
+            //console.log(aiToggle.checked);
+            resetAll();
             if (player2Div.style.display === "none") {
                 player2Div.style.display = "block";
               } else {
                 player2Div.style.display = "none";
               }
+            gameBoard.toggleAIPlay();
+            console.log(gameBoard.getAIStatus());
             
+            if (gameBoard.getAIStatus()==true){
+                userMessage.classList.remove("warning");
+                userMessage.classList.add('message');
+                userMessage.textContent = ("Enter your name to play against the AI!")
+            } else if(gameBoard.getAIStatus()==false) {
+                userMessage.classList.remove("message");
+                userMessage.textContent = "";
+            }
+            
+        });
+
+        restartBut.addEventListener('click',()=>{
+            location.reload();
         });
     }
 
