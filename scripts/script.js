@@ -35,11 +35,14 @@ const gameBoard = (()=>{
     let _isFinished = false;
     let _result;
     let _playWithAi = false;
+    let _aiFirstMove = true;
     
+
     const resetGame = ()=>{
         _isSet = false;
         _isFinished = false;
         //_playWithAi = false;
+        let _aiFirstMove = true;
         _gameBoard = [[0 ,0 ,0],
                      [0, 0 ,0],
                      [0,0,0]
@@ -67,6 +70,10 @@ const gameBoard = (()=>{
         _Player2.toggleTurn();
     }
 
+    const toggleGameFinished = ()=>{
+        _isFinished = !_isFinished;
+    }
+
     const getBoard = ()=> _gameBoard;
     
     const updateBoard = (index,mark)=>{
@@ -81,37 +88,44 @@ const gameBoard = (()=>{
         if (index==8) _gameBoard[2][2] = mark;
     };
 
-    const checkForEnd = (mark)=>{
+    const checkForEnd = (mark,board)=>{
         let fillCount = 0;
 
         for (let i=0;i<3;i++){
-            if (mark== _gameBoard[i][0] && _gameBoard[i][0] == _gameBoard[i][1] && _gameBoard[i][2]== _gameBoard[i][1]){
-                _isFinished = true;
-            } else if(mark == _gameBoard[0][i] && _gameBoard[0][i] == _gameBoard[1][i] && _gameBoard[2][i]== _gameBoard[1][i]){
-                _isFinished = true;
+            if (mark== board[i][0] && board[i][0] == board[i][1] && board[i][2]== board[i][1]){
+                //_isFinished = true;
+                return true;
+            } else if(mark == board[0][i] && board[0][i] == board[1][i] && board[2][i]== board[1][i]){
+                //_isFinished = true;
+                return true;
             }
         }
-        if (mark == _gameBoard[0][0] && _gameBoard[0][0]==_gameBoard[1][1] && _gameBoard[2][2] == _gameBoard[1][1]) {
-            _isFinished = true;
-        } else if (mark == _gameBoard[0][2] && _gameBoard[0][2]==_gameBoard[1][1] && _gameBoard[2][0] == _gameBoard[1][1]){
-            _isFinished = true;
+        if (mark == board[0][0] && board[0][0]== board[1][1] && board[2][2] == board[1][1]) {
+            //_isFinished = true;
+            return true;
+        } else if (mark == board[0][2] && board[0][2]==board[1][1] && board[2][0] == board[1][1]){
+            //_isFinished = true;
+            return true;
         }
 
         for (let i=0;i<3;i++){
             for (let j=0;j<3;j++){
-                if (_gameBoard[i][j] != 0){
+                if (board[i][j] != 0){
                 fillCount++;
                 }
             }
         }
         
-        if (mark=="X") _result = "p1win";
-        if (mark=="O") _result = "p2win";
+        //if (mark=="X") _result = "p1win";
+        //if (mark=="O") _result = "p2win";
 
         if (fillCount == 9) {
-            _isFinished = true;
+            //_isFinished = true;
             _result = "draw";
+            return "draw";
         }
+
+        return false;
 
     }
 
@@ -123,18 +137,69 @@ const gameBoard = (()=>{
         return _playWithAi;
     }
 
-    const aiPlay = (mark)=>{
+    const getAvaliableMoves = (board)=>{
         let avaliableMoves = [];
+        
         for (let i=0;i<3;i++){
             for (let j=0;j<3;j++){
-                if (_gameBoard[i][j] == 0){
+                if (board[i][j] == 0){
                     avaliableMoves.push([i,j])
                 }
             }
         }
-        const randomMove = avaliableMoves[Math.floor(Math.random() * avaliableMoves.length)];
-        let x= randomMove[0];
-        let y= randomMove[1];
+
+        return avaliableMoves;
+    }
+
+    const boardCreator = (board)=>{
+        let newBoard = [[0 ,0 ,0],
+                    [0, 0 ,0],
+                    [0,0,0]
+                ];
+
+        for (let i=0;i<3;i++){
+            for (let j=0;j<3;j++){
+                if (board[i][j] != newBoard[i][j])  newBoard[i][j]=board[i][j];
+            }
+        }
+
+        return newBoard;
+    }
+    const aiPlay = ()=>{
+        
+
+        let avaliableMoves = getAvaliableMoves(getBoard());
+        let bestMove;
+        /*
+        if (_aiFirstMove){
+            bestMove = avaliableMoves[Math.floor(Math.random() * avaliableMoves.length)];
+            _aiFirstMove = false;
+        } 
+        else {
+            */
+            let bestScore = -100000;
+            let newBoard = boardCreator(getBoard());
+
+            avaliableMoves.forEach(move=>{
+            let x = move[0];
+            let y = move[1];
+            newBoard[x][y] = "O";
+            score = minimax(newBoard,0,"O");
+            console.log(`x: ${x} y: ${y} score: ${score}`);
+            //_gameBoard[x][y] = 0;
+            if (score>bestScore){
+                bestScore = score;
+                bestMove = move;
+                //console.log(bestMove);
+            }
+            newBoard[x][y] = 0;
+            });
+        //}
+        
+        
+
+        let x=  bestMove[0];
+        let y= bestMove[1];
         console.log(x + ' ' +y)
 
         _gameBoard[x][y] = "O";
@@ -151,8 +216,67 @@ const gameBoard = (()=>{
         
     }
 
+
+    const minimax = (board,depth,player)=>{
+
+        if (checkForEnd(player,board)=="draw") return 0;
+        else if (checkForEnd("O",board)) return (10-Number(depth));
+        else if(checkForEnd("X",board)) return (-10+Number(depth));
+        
+        depth++;
+
+        let avaliableMoves = getAvaliableMoves(board);
+        //console.log(scores);
+
+        if (player=="O"){
+            let bestVal = -1000;
+            avaliableMoves.forEach((move)=>{
+                let x=move[0];
+                let y=move[1];
+                
+                board[x][y] = "O";
+                //console.log(board);
+                let value = (minimax(board,depth,"X"));
+                if (value>bestVal){
+                    bestVal = value;
+                }
+                //board[x][y] = 0;
+    
+            });
+            //console.log(scores);
+            /*return scores.reduce(function(a, b) {
+                return Math.max(a, b);
+            })*/
+            return bestVal;
+        }
+        else {
+            let bestVal = +1000;
+            avaliableMoves.forEach((move)=>{
+                let x=move[0];
+                let y=move[1];
+                
+                board[x][y] = "X";
+                value = (minimax(board,depth,"O"));
+                if (value<bestVal){
+                    bestVal = value;
+                }
+                //board[x][y] = 0;
+                
+            });
+            /*
+            return scores.reduce(function(a, b) {
+                return Math.min(a, b);
+            })
+            */
+           return bestVal;
+        }
+
+
+    }
+
     return{
-        getBoard, updateBoard, setPlayers,returnPlayer,changeTurns, isSet, checkForEnd,isFinished,getResult,toggleAIPlay,getAIStatus,resetGame,aiPlay
+        getBoard, updateBoard, setPlayers,returnPlayer,changeTurns, isSet, checkForEnd,isFinished,getResult,
+        toggleAIPlay,getAIStatus,resetGame,aiPlay,minimax,toggleGameFinished,
     };
 })();
 
@@ -171,10 +295,11 @@ const gameBoard = (()=>{
     let restartBut = document.querySelector("#restart-but");
 
     const displayResult = ()=>{
-        if (gameBoard.getResult() == "draw") {
+        gameBoard.toggleGameFinished();
+        if (gameBoard.checkForEnd("O",gameBoard.getBoard())=="draw"){
             userMessage.textContent = "It is a Tie!";
         } else {
-            if (!gameBoard.getAIStatus()) gameBoard.changeTurns();
+            //if (!gameBoard.getAIStatus()) gameBoard.changeTurns();
             userMessage.textContent = `${gameBoard.returnPlayer().getName()} is the winner!`;
 
         }
@@ -213,8 +338,7 @@ const gameBoard = (()=>{
                     if (entry.textContent == " " ) {
                         entry.textContent = _player.getMarker();
                         gameBoard.updateBoard(i,entry.textContent)
-                        gameBoard.checkForEnd(entry.textContent);
-                        if (gameBoard.isFinished()) {
+                        if (gameBoard.checkForEnd(entry.textContent,gameBoard.getBoard())) {
                             displayResult();
                             return;
                         } 
@@ -225,9 +349,8 @@ const gameBoard = (()=>{
                             let pos = gameBoard.aiPlay();
                             _entries[pos].textContent = "O";
                             
-                            
-                            gameBoard.checkForEnd("O");
-                            if (gameBoard.isFinished()) {
+                            //gameBoard.checkForEnd("O",gameBoard.getBoard());
+                            if (gameBoard.checkForEnd("O",gameBoard.getBoard())) {
                                 displayResult();
                                 return;
                             } 
