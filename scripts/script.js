@@ -1,5 +1,5 @@
 
-//    Players: 
+//    Players Factory:
 const Player = (name,marker,turn) => {
     
     const getName = () => name;
@@ -16,7 +16,6 @@ const Player = (name,marker,turn) => {
     
     return{getName,getMarker,toggleTurn,getTurn}
 };
-
 
 
 //   Control the Game Flow: Most of the logic will be applied here: 
@@ -124,12 +123,36 @@ const gameBoard = (()=>{
         return _playWithAi;
     }
 
-    const aiPlay = ()=>{
+    const aiPlay = (mark)=>{
+        let avaliableMoves = [];
+        for (let i=0;i<3;i++){
+            for (let j=0;j<3;j++){
+                if (_gameBoard[i][j] == 0){
+                    avaliableMoves.push([i,j])
+                }
+            }
+        }
+        const randomMove = avaliableMoves[Math.floor(Math.random() * avaliableMoves.length)];
+        let x= randomMove[0];
+        let y= randomMove[1];
+        console.log(x + ' ' +y)
+
+        _gameBoard[x][y] = "O";
+
+        if (x==0 && y==0) return 0;
+        if (x==0 && y==1) return 1;
+        if (x==0 && y==2) return 2;
+        if (x==1 && y==0) return 3;
+        if (x==1 && y==1) return 4;
+        if (x==1 && y==2) return 5;
+        if (x==2 && y==0) return 6;
+        if (x==2 && y==1) return 7;
+        if (x==2 && y==2) return 8;
         
     }
 
     return{
-        getBoard, updateBoard, setPlayers,returnPlayer,changeTurns, isSet, checkForEnd,isFinished,getResult,toggleAIPlay,getAIStatus,resetGame
+        getBoard, updateBoard, setPlayers,returnPlayer,changeTurns, isSet, checkForEnd,isFinished,getResult,toggleAIPlay,getAIStatus,resetGame,aiPlay
     };
 })();
 
@@ -151,7 +174,7 @@ const gameBoard = (()=>{
         if (gameBoard.getResult() == "draw") {
             userMessage.textContent = "It is a Tie!";
         } else {
-            gameBoard.changeTurns();
+            if (!gameBoard.getAIStatus()) gameBoard.changeTurns();
             userMessage.textContent = `${gameBoard.returnPlayer().getName()} is the winner!`;
 
         }
@@ -190,17 +213,28 @@ const gameBoard = (()=>{
                     if (entry.textContent == " " ) {
                         entry.textContent = _player.getMarker();
                         gameBoard.updateBoard(i,entry.textContent)
-                        gameBoard.changeTurns();
-                        if (gameBoard.getAIStatus()) {
-                            console.log("HERE goes the code to make the AI Play")
-                            
-                        
-                        }
                         gameBoard.checkForEnd(entry.textContent);
                         if (gameBoard.isFinished()) {
                             displayResult();
                             return;
+                        } 
+                        gameBoard.changeTurns();
+
+                        if (gameBoard.getAIStatus()) {
+                            console.log("HERE goes the code to make the AI Play")
+                            let pos = gameBoard.aiPlay();
+                            _entries[pos].textContent = "O";
+                            
+                            
+                            gameBoard.checkForEnd("O");
+                            if (gameBoard.isFinished()) {
+                                displayResult();
+                                return;
+                            } 
+                            gameBoard.changeTurns();
                         }
+                        
+                        
 
                         userMessage.classList.remove("warning");
                         userMessage.classList.add('message');
