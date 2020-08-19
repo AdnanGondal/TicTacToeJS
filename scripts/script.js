@@ -221,8 +221,8 @@ const gameBoard = (()=>{
     const minimax = (board,depth,player)=>{
 
         if (checkForEnd(player,board)=="draw") return 0;
-        else if (checkForEnd("O",board)) {return (10);}
-        else if(checkForEnd("X",board)) return (-10);
+        else if (checkForEnd("O",board)) {return (10-depth);}
+        else if(checkForEnd("X",board)) return (-10+depth);
         
         depth++;
         let avaliableMoves = getAvaliableMoves(board);
