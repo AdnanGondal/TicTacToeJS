@@ -89,7 +89,7 @@ const gameBoard = (()=>{
     };
 
     const checkForEnd = (mark,board)=>{
-        let fillCount = 0;
+        
 
         for (let i=0;i<3;i++){
             if (mark== board[i][0] && board[i][0] == board[i][1] && board[i][2]== board[i][1]){
@@ -108,6 +108,7 @@ const gameBoard = (()=>{
             return true;
         }
 
+        let fillCount = 0;
         for (let i=0;i<3;i++){
             for (let j=0;j<3;j++){
                 if (board[i][j] != 0){
@@ -181,18 +182,18 @@ const gameBoard = (()=>{
             let newBoard = boardCreator(getBoard());
 
             avaliableMoves.forEach(move=>{
-            let x = move[0];
-            let y = move[1];
-            newBoard[x][y] = "O";
-            score = minimax(newBoard,0,"O");
-            console.log(`x: ${x} y: ${y} score: ${score}`);
-            //_gameBoard[x][y] = 0;
-            if (score>bestScore){
-                bestScore = score;
-                bestMove = move;
-                //console.log(bestMove);
-            }
-            newBoard[x][y] = 0;
+                let x = move[0];
+                let y = move[1];
+                newBoard[x][y] = "O";
+                score = minimax(newBoard,0,"X");
+                console.log(`x: ${x} y: ${y} score: ${score}`);
+                //_gameBoard[x][y] = 0;
+                if (score>=bestScore){
+                    bestScore = score;
+                    bestMove = move;
+                    //console.log(bestMove);
+                }
+                newBoard[x][y] = 0;
             });
         //}
         
@@ -220,12 +221,12 @@ const gameBoard = (()=>{
     const minimax = (board,depth,player)=>{
 
         if (checkForEnd(player,board)=="draw") return 0;
-        else if (checkForEnd("O",board)) return (10-Number(depth));
-        else if(checkForEnd("X",board)) return (-10+Number(depth));
+        else if (checkForEnd("O",board)) {return (10);}
+        else if(checkForEnd("X",board)) return (-10);
         
         depth++;
-
         let avaliableMoves = getAvaliableMoves(board);
+        //console.log(avaliableMoves);
         //console.log(scores);
 
         if (player=="O"){
@@ -237,37 +238,39 @@ const gameBoard = (()=>{
                 board[x][y] = "O";
                 //console.log(board);
                 let value = (minimax(board,depth,"X"));
-                if (value>bestVal){
+                if (value>=bestVal){
                     bestVal = value;
                 }
-                //board[x][y] = 0;
+                board[x][y] = 0;
     
             });
             //console.log(scores);
             /*return scores.reduce(function(a, b) {
                 return Math.max(a, b);
             })*/
+           
             return bestVal;
         }
         else {
-            let bestVal = +1000;
+            
+            let bestVal = 1000;
             avaliableMoves.forEach((move)=>{
                 let x=move[0];
                 let y=move[1];
                 
                 board[x][y] = "X";
                 value = (minimax(board,depth,"O"));
-                if (value<bestVal){
+                if (value<=bestVal){
                     bestVal = value;
                 }
-                //board[x][y] = 0;
-                
+                board[x][y] = 0;
             });
             /*
             return scores.reduce(function(a, b) {
                 return Math.min(a, b);
             })
             */
+          
            return bestVal;
         }
 
