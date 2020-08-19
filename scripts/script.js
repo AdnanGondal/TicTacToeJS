@@ -1,25 +1,4 @@
-
-//    Players Factory:
-const Player = (name,marker,turn) => {
-    
-    const getName = () => name;
-    //const setName = (name)=> this.name = name;
-    
-    const getMarker = ()=> marker;
-    const getTurn = ()=>turn;
-
-    const toggleTurn = ()=>{
-        if (turn) turn=false;
-        else if (!turn) turn = true;
-    }
-
-    
-    return{getName,getMarker,toggleTurn,getTurn}
-};
-
-
-//   Control the Game Flow: Most of the logic will be applied here: 
-
+//   Control the Game Flow: Most of the game logic is here:----------------------------------
 const gameBoard = (()=>{
     
     let _gameBoard = [[0 ,0 ,0],
@@ -35,9 +14,14 @@ const gameBoard = (()=>{
     let _isFinished = false;
     let _result;
     let _playWithAi = false;
-    let _aiFirstMove = true;
     
-
+    //once submit is pressed:
+    const setPlayers = (name1,name2)=>{
+        _Player1 = Player(name1,'X',true);
+        if (!_playWithAi) _Player2 = Player(name2,'O',false);
+        else _Player2 = Player("Computer",'O',false);
+        _isSet = true;
+    }
     const resetGame = ()=>{
         _isSet = false;
         _isFinished = false;
@@ -47,13 +31,6 @@ const gameBoard = (()=>{
                      [0, 0 ,0],
                      [0,0,0]
                     ];
-    }
-
-    const setPlayers = (name1,name2)=>{
-        _Player1 = Player(name1,'X',true);
-        if (!_playWithAi) _Player2 = Player(name2,'O',false);
-        else _Player2 = Player("Computer",'O',false);
-        _isSet = true;
     }
 
     const isSet= () => _isSet;
@@ -88,23 +65,19 @@ const gameBoard = (()=>{
         if (index==8) _gameBoard[2][2] = mark;
     };
 
-    const checkForEnd = (mark,board)=>{
-        
 
+    const checkForEnd = (mark,board)=>{
+    
         for (let i=0;i<3;i++){
             if (mark== board[i][0] && board[i][0] == board[i][1] && board[i][2]== board[i][1]){
-                //_isFinished = true;
                 return true;
             } else if(mark == board[0][i] && board[0][i] == board[1][i] && board[2][i]== board[1][i]){
-                //_isFinished = true;
                 return true;
             }
         }
         if (mark == board[0][0] && board[0][0]== board[1][1] && board[2][2] == board[1][1]) {
-            //_isFinished = true;
             return true;
         } else if (mark == board[0][2] && board[0][2]==board[1][1] && board[2][0] == board[1][1]){
-            //_isFinished = true;
             return true;
         }
 
@@ -117,11 +90,7 @@ const gameBoard = (()=>{
             }
         }
         
-        //if (mark=="X") _result = "p1win";
-        //if (mark=="O") _result = "p2win";
-
         if (fillCount == 9) {
-            //_isFinished = true;
             _result = "draw";
             return "draw";
         }
@@ -129,6 +98,8 @@ const gameBoard = (()=>{
         return false;
 
     }
+
+    //For AI: 
 
     const toggleAIPlay = ()=>{
         _playWithAi= !_playWithAi;
@@ -166,39 +137,33 @@ const gameBoard = (()=>{
 
         return newBoard;
     }
-    const aiPlay = ()=>{
-        
 
+
+    //One turn of the AI: 
+    const aiPlay = ()=>{
+    
         let avaliableMoves = getAvaliableMoves(getBoard());
         let bestMove;
-        /*
-        if (_aiFirstMove){
-            bestMove = avaliableMoves[Math.floor(Math.random() * avaliableMoves.length)];
-            _aiFirstMove = false;
-        } 
-        else {
-            */
-            let bestScore = -100000;
-            let newBoard = boardCreator(getBoard());
-
-            avaliableMoves.forEach(move=>{
-                let x = move[0];
-                let y = move[1];
-                newBoard[x][y] = "O";
-                score = minimax(newBoard,0,"X");
-                console.log(`x: ${x} y: ${y} score: ${score}`);
-                //_gameBoard[x][y] = 0;
-                if (score>=bestScore){
-                    bestScore = score;
-                    bestMove = move;
-                    //console.log(bestMove);
-                }
-                newBoard[x][y] = 0;
-            });
-        //}
         
-        
+        let bestScore = -100000;
+        let newBoard = boardCreator(getBoard());
 
+            
+        avaliableMoves.forEach(move=>{
+            let x = move[0];
+            let y = move[1];
+            newBoard[x][y] = "O";
+            score = minimax(newBoard,0,"X");
+            console.log(`x: ${x} y: ${y} score: ${score}`);
+               
+            if (score>=bestScore){
+                bestScore = score;
+                bestMove = move;
+                   
+            }
+            newBoard[x][y] = 0;
+        });
+   
         let x=  bestMove[0];
         let y= bestMove[1];
         console.log(x + ' ' +y)
@@ -217,7 +182,7 @@ const gameBoard = (()=>{
         
     }
 
-
+    //Minimax algorithm for AI: 
     const minimax = (board,depth,player)=>{
 
         if (checkForEnd(player,board)=="draw") return 0;
@@ -226,9 +191,6 @@ const gameBoard = (()=>{
         
         depth++;
         let avaliableMoves = getAvaliableMoves(board);
-        //console.log(avaliableMoves);
-        //console.log(scores);
-
         if (player=="O"){
             let bestVal = -1000;
             avaliableMoves.forEach((move)=>{
@@ -236,7 +198,7 @@ const gameBoard = (()=>{
                 let y=move[1];
                 
                 board[x][y] = "O";
-                //console.log(board);
+    
                 let value = (minimax(board,depth,"X"));
                 if (value>=bestVal){
                     bestVal = value;
@@ -244,11 +206,6 @@ const gameBoard = (()=>{
                 board[x][y] = 0;
     
             });
-            //console.log(scores);
-            /*return scores.reduce(function(a, b) {
-                return Math.max(a, b);
-            })*/
-           
             return bestVal;
         }
         else {
@@ -265,12 +222,6 @@ const gameBoard = (()=>{
                 }
                 board[x][y] = 0;
             });
-            /*
-            return scores.reduce(function(a, b) {
-                return Math.min(a, b);
-            })
-            */
-          
            return bestVal;
         }
 
@@ -284,10 +235,9 @@ const gameBoard = (()=>{
 })();
 
 
-// DOM Update:
+// Control the DOM:---------------------------------------------------------------------------------------------------
  const displayController = (()=> {
     
-
     let player1Name = document.querySelector("#player1-name");
     let player2Name = document.querySelector("#player2-name");
     let submitBut = document.querySelector('#name-submit-but')
@@ -410,4 +360,23 @@ const gameBoard = (()=>{
  })();
 
 
+//Players Factory-----------------------------------------------------
+const Player = (name,marker,turn) => {
+    
+    const getName = () => name;
+    //const setName = (name)=> this.name = name;
+    
+    const getMarker = ()=> marker;
+    const getTurn = ()=>turn;
+
+    const toggleTurn = ()=>{
+        if (turn) turn=false;
+        else if (!turn) turn = true;
+    }
+
+    
+    return{getName,getMarker,toggleTurn,getTurn}
+};
+
+//Only line of Global Code: 
 displayController.render();
